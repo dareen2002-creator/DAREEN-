@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Quest</title>
+<style>
+body{
+    font-family:"Times New Roman", serif;
+    background:#f5f5f5;
+    margin:0;
+    padding:20px;
+    color:#111;
+}
+.container{
+    max-width:800px;
+    margin:auto;
+    background:#fff;
+    padding:24px;
+    border:1px solid #ccc;
+    border-radius:10px;
+}
+h1,h2{
+    text-align:center;
+}
+.status{
+    display:flex;
+    justify-content:space-between;
+    margin:20px 0;
+    font-size:18px;
+}
+.card{
+    border:1px solid #ccc;
+    padding:20px;
+    border-radius:8px;
+}
+.code{
+    background:#eee;
+    padding:12px;
+    margin:15px 0;
+    font-family:monospace;
+    white-space:pre-wrap;
+}
+button{
+    width:100%;
+    padding:10px;
+    margin:7px 0;
+    font-family:"Times New Roman", serif;
+    font-size:17px;
+    background:#fff;
+    border:1px solid #444;
+    border-radius:6px;
+    cursor:pointer;
+}
+button:hover{
+    background:#eee;
+}
+.correct{
+    background:#e8f5e9;
+}
+.wrong{
+    background:#fdeaea;
+}
+.feedback{
+    display:none;
+    margin-top:15px;
+    padding:12px;
+    border-radius:6px;
+}
+.next{
+    display:none;
+    background:#111;
+    color:#fff;
+}
+.final{
+    display:none;
+    text-align:center;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Python Quest</h1>
+<h2>20 Simple Python Challenges</h2>
+
+<div class="status">
+    <div>Score: <span id="score">0</span></div>
+    <div>Question: <span id="questionNumber">1</span>/20</div>
+</div>
+
+<div class="card" id="gameCard">
+    <h3 id="topic"></h3>
+    <p id="question"></p>
+    <div class="code" id="code"></div>
+    <div id="answers"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <button class="next" id="nextBtn" onclick="nextQuestion()">Next</button>
+</div>
+
+<div class="final" id="final">
+    <h2>Finished</h2>
+    <p>Your score is <span id="finalScore"></span> out of 200.</p>
+    <button onclick="restartGame()">Play Again</button>
+</div>
+
+</div>
+
+<script>
+const questions = [
+{
+topic:"1. print()",
+question:"What will Python show?",
+code:'print("Hello")',
+answers:["Hello","print","Nothing","Error"],
+correct:0,
+explanation:"print() shows information on the screen."
+},
+{
+topic:"2. Variable",
+question:"What value is stored in age?",
+code:'age = 15',
+answers:["age","15","0","Nothing"],
+correct:1,
+explanation:"A variable stores a value. age stores 15."
+},
+{
+topic:"3. String",
+question:"Which line stores a name correctly?",
+code:"",
+answers:['name = "Ali"',"name = Ali","Ali = name","name == Ali"],
+correct:0,
+explanation:"Text needs quotation marks."
+},
+{
+topic:"4. input()",
+question:"What does input() do?",
+code:'name = input("Enter your name: ")',
+answers:["Gets information from the user","Prints text","Stops Python","Deletes a variable"],
+correct:0,
+explanation:"input() lets the user type information."
+},
+{
+topic:"5. Addition",
+question:"What is the output?",
+code:'x = 4\ny = 3\nprint(x + y)',
+answers:["43","7","12","Error"],
+correct:1,
+explanation:"Python adds 4 and 3. The answer is 7."
+},
+{
+topic:"6. if statement",
+question:"When will Pass be printed?",
+code:'mark = 70\nif mark >= 50:\n    print("Pass")',
+answers:["When mark is 50 or more","When mark is below 50","Never","Always"],
+correct:0,
+explanation:"The code runs when the condition is True."
+},
+{
+topic:"7. Comparison",
+question:"What does == mean?",
+code:'if x == 5:',
+answers:["Check if two values are equal","Store a value","Add values","Print a value"],
+correct:0,
+explanation:"== checks whether two values are equal."
+},
+{
+topic:"8. for loop",
+question:"How many times will Hello print?",
+code:'for i in range(3):\n    print("Hello")',
+answers:["1","2","3","4"],
+correct:2,
+explanation:"range(3) repeats the loop 3 times."
+},
+{
+topic:"9. for loop values",
+question:"What values will Python print?",
+code:'for i in range(3):\n    print(i)',
+answers:["0, 1, 2","1, 2, 3","0, 1, 2, 3","3"],
+correct:0,
+explanation:"range(3) starts at 0 and stops before 3."
+},
+{
+topic:"10. range()",
+question:"What values will Python print?",
+code:'for i in range(2, 5):\n    print(i)',
+answers:["2, 3, 4","2, 3, 4, 5","1, 2, 3, 4","5"],
+correct:0,
+explanation:"range(2, 5) starts at 2 and stops before 5."
+},
+{
+topic:"11. Loop calculation",
+question:"What is the output?",
+code:'for i in range(1, 4):\n    print(i * 2)',
+answers:["2, 4, 6","1, 2, 3","2, 3, 4","3, 6, 9"],
+correct:0,
+explanation:"Python multiplies 1, 2, and 3 by 2."
+},
+{
+topic:"12. Debugging",
+question:"What is missing?",
+code:'if age >= 18\n    print("Adult")',
+answers:["A colon :","Quotation marks","A variable","print()"],
+correct:0,
+explanation:"An if statement needs a colon at the end."
+},
+{
+topic:"13. Loop and if",
+question:"How many times will Found print?",
+code:'for i in range(4):\n    if i == 2:\n        print("Found")',
+answers:["Once","Twice","Four times","Never"],
+correct:0,
+explanation:"Only one value is equal to 2."
+},
+{
+topic:"14. import time",
+question:"Why do we write import time?",
+code:'import time',
+answers:["To use Python time tools","To create a variable","To print text","To make a loop"],
+correct:0,
+explanation:"import time gives Python access to the time module."
+},
+{
+topic:"15. time.sleep()",
+question:"What happens when this program runs?",
+code:'import time\n\nprint("Start")\ntime.sleep(3)\nprint("3 seconds finished")',
+answers:[
+'It prints Start, waits 3 seconds, then prints 3 seconds finished',
+'It prints both messages immediately',
+'It repeats Start 3 times',
+'It stops the program'
+],
+correct:0,
+explanation:"time.sleep(3) pauses the program for 3 seconds."
+},
+{
+topic:"16. Variables",
+question:"What will Python print?",
+code:'name = "Sara"\nprint(name)',
+answers:["Sara","name","Nothing","Error"],
+correct:0,
+explanation:"The variable name stores Sara. print(name) displays the stored value."
+},
+{
+topic:"17. Changing a variable",
+question:"What is the final value of score?",
+code:'score = 5\nscore = 10\nprint(score)',
+answers:["5","10","15","Error"],
+correct:1,
+explanation:"The second line changes the value of score from 5 to 10."
+},
+{
+topic:"18. if and else",
+question:"What will this program print?",
+code:'age = 12\nif age >= 18:\n    print("Adult")\nelse:\n    print("Student")',
+answers:["Adult","Student","12","Nothing"],
+correct:1,
+explanation:"12 is not greater than or equal to 18, so Python runs the else section."
+},
+{
+topic:"19. for loop",
+question:"How many numbers will Python print?",
+code:'for i in range(5):\n    print(i)',
+answers:["4","5","6","1"],
+correct:1,
+explanation:"range(5) produces 0, 1, 2, 3, and 4. That is five values."
+},
+{
+topic:"20. Python Challenge",
+question:"What will this program print?",
+code:'score = 3\nfor i in range(2):\n    score = score + 1\nprint(score)',
+answers:["2","3","4","5"],
+correct:3,
+explanation:"score starts at 3. The loop runs twice and adds 1 each time. The final value is 5."
+}
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+function loadQuestion(){
+    answered = false;
+
+    const q = questions[current];
+
+    document.getElementById("topic").textContent = q.topic;
+    document.getElementById("question").textContent = q.question;
+    document.getElementById("code").textContent = q.code || "Choose the correct answer.";
+    document.getElementById("questionNumber").textContent = current + 1;
+
+    const answers = document.getElementById("answers");
+    answers.innerHTML = "";
+
+    q.answers.forEach((answer, index)=>{
+        const btn = document.createElement("button");
+        btn.textContent = answer;
+        btn.onclick = ()=>checkAnswer(index);
+        answers.appendChild(btn);
+    });
+
+    document.getElementById("feedback").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+}
+
+function checkAnswer(index){
+    if(answered) return;
+
+    answered = true;
+    const q = questions[current];
+    const buttons = document.querySelectorAll("#answers button");
+    const feedback = document.getElementById("feedback");
+
+    buttons.forEach((btn, i)=>{
+        if(i === q.correct){
+            btn.classList.add("correct");
+        }else if(i === index){
+            btn.classList.add("wrong");
+        }
+        btn.disabled = true;
+    });
+
+    feedback.style.display = "block";
+
+    if(index === q.correct){
+        score += 10;
+        document.getElementById("score").textContent = score;
+        feedback.className = "feedback correct";
+        feedback.innerHTML = "<b>Correct.</b><br>" + q.explanation;
+    }else{
+        feedback.className = "feedback wrong";
+        feedback.innerHTML = "<b>Try again next time.</b><br>" + q.explanation;
+    }
+
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion(){
+    current++;
+
+    if(current < questions.length){
+        loadQuestion();
+    }else{
+        document.getElementById("gameCard").style.display = "none";
+        document.getElementById("final").style.display = "block";
+        document.getElementById("finalScore").textContent = score;
+    }
+}
+
+function restartGame(){
+    current = 0;
+    score = 0;
+    document.getElementById("score").textContent = 0;
+    document.getElementById("gameCard").style.display = "block";
+    document.getElementById("final").style.display = "none";
+    loadQuestion();
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
